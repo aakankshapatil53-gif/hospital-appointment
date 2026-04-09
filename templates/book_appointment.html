@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}Book Appointment{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h2><i class="bi bi-calendar-plus me-2"></i>Book an Appointment</h2>
+    <p>Select a doctor, date, and time slot</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+      <div class="card">
+        <div class="card-header"><i class="bi bi-calendar-event me-2"></i>Appointment Details</div>
+        <div class="card-body p-4">
+
+          {% if error %}
+          <div class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+          {% endif %}
+
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            Appointment fee: <strong>₹500</strong> &nbsp;|&nbsp;
+            Booking for: <strong>{{ session.patient_name }}</strong>
+          </div>
+
+          <form method="POST" id="appointmentForm">
+            <!-- Doctor Selection -->
+            <div class="mb-4">
+              <label><i class="bi bi-stethoscope me-1"></i>Select Doctor</label>
+              <select class="form-select" name="doctor_id" id="doctorSelect" required>
+                <option value="">-- Choose a Doctor --</option>
+                {% for doc in doctors %}
+                <option value="{{ doc.doctor_id }}">
+                  Dr. {{ doc.name }} – {{ doc.specialization }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Date -->
+            <div class="mb-4">
+              <label><i class="bi bi-calendar3 me-1"></i>Appointment Date</label>
+              <input type="date" class="form-control" name="date" id="dateInput" required/>
+            </div>
+
+            <!-- Time Slot -->
+            <div class="mb-4">
+              <label><i class="bi bi-clock me-1"></i>Time Slot</label>
+              <select class="form-select" name="time_slot" required>
+                <option value="">-- Select Time Slot --</option>
+                {% for slot in slots %}
+                <option value="{{ slot.slot_time }}">{{ slot.slot_time }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="alert alert-warning">
+              <i class="bi bi-exclamation-circle me-2"></i>
+              After booking, you will be redirected to the payment page. Appointment is confirmed only after payment.
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fs-6">
+              <i class="bi bi-calendar-check me-2"></i>Proceed to Payment (₹500)
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Doctors Info Panel -->
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header"><i class="bi bi-people me-2"></i>Available Doctors</div>
+        <div class="card-body p-0">
+          {% for doc in doctors %}
+          <div class="p-3 border-bottom">
+            <div class="d-flex align-items-center gap-3">
+              <div class="feature-icon" style="width:44px;height:44px;font-size:1.1rem;">
+                <i class="bi bi-person-badge"></i>
+              </div>
+              <div>
+                <div class="fw-bold" style="font-size:0.9rem;">Dr. {{ doc.name }}</div>
+                <small class="text-muted">{{ doc.specialization }}</small>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+  const doctor = document.getElementById('doctorSelect').value;
+  const date   = document.getElementById('dateInput').value;
+  if (!doctor || !date) {
+    e.preventDefault();
+    showToast('Please fill in all required fields.', 'warning');
+  }
+});
+</script>
+{% endblock %}

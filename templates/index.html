@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}City Care Hospital – Home{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <h1><i class="bi bi-heart-pulse-fill me-3"></i>City Care Hospital</h1>
+    <p>Your trusted healthcare partner. Book appointments, manage prescriptions,<br>and get digital receipts — all in one place.</p>
+    <div class="mt-4">
+      <a href="{{ url_for('patient_register') }}" class="hero-btn">
+        <i class="bi bi-person-plus me-2"></i>Register as Patient
+      </a>
+      <a href="{{ url_for('patient_login') }}" class="hero-btn outline">
+        <i class="bi bi-calendar-check me-2"></i>Book Appointment
+      </a>
+      <a href="{{ url_for('doctor_login') }}" class="hero-btn outline">
+        <i class="bi bi-stethoscope me-2"></i>Doctor Portal
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="py-5">
+  <div class="container">
+    <h2 class="section-title text-center mx-auto" style="width:fit-content;">Our Services</h2>
+    <div class="row g-4 mt-2">
+      <div class="col-md-4">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-calendar-plus"></i></div>
+          <h5>Online Appointment Booking</h5>
+          <p class="text-muted">Book appointments with specialist doctors easily. Choose your preferred date and time slot.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-credit-card"></i></div>
+          <h5>Multiple Payment Options</h5>
+          <p class="text-muted">Pay via Cash, Card, or UPI with QR code. Get instant digital receipts for every transaction.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-prescription2"></i></div>
+          <h5>Digital Prescriptions</h5>
+          <p class="text-muted">Doctors create digital prescriptions. Get itemized billing and downloadable PDF receipts.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-people"></i></div>
+          <h5>Expert Doctors</h5>
+          <p class="text-muted">Access specialists in Cardiology, Dermatology, Orthopedics, Neurology, and more.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-file-earmark-pdf"></i></div>
+          <h5>PDF Receipts</h5>
+          <p class="text-muted">Download professional PDF receipts for appointments and prescription payments.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
+          <h5>Admin Dashboard</h5>
+          <p class="text-muted">Complete management panel for doctors, patients, appointments, and financial reports.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK LINKS -->
+<section class="py-4 bg-white">
+  <div class="container text-center">
+    <h4 class="fw-bold mb-4" style="color:var(--primary)">Quick Access</h4>
+    <div class="row g-3 justify-content-center">
+      <div class="col-auto">
+        <a href="{{ url_for('patient_register') }}" class="btn btn-primary btn-lg">
+          <i class="bi bi-person-plus me-2"></i>New Patient Registration
+        </a>
+      </div>
+      <div class="col-auto">
+        <a href="{{ url_for('patient_login') }}" class="btn btn-outline-primary btn-lg">
+          <i class="bi bi-calendar2-check me-2"></i>Existing Patient Login
+        </a>
+      </div>
+      <div class="col-auto">
+        <a href="{{ url_for('admin_login') }}" class="btn btn-outline-secondary btn-lg">
+          <i class="bi bi-gear me-2"></i>Admin Panel
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

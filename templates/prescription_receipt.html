@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Prescription Bill Receipt{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="receipt-box">
+    <div class="receipt-header">
+      <h3><i class="bi bi-heart-pulse-fill me-2"></i>City Care Hospital</h3>
+      <p>123, Health Street, Nashik, Maharashtra | +91-253-XXXXXXX</p>
+      <div class="mt-3">
+        <span style="background:rgba(255,255,255,0.2);padding:6px 16px;border-radius:20px;font-size:0.85rem;">
+          PRESCRIPTION BILL RECEIPT
+        </span>
+      </div>
+    </div>
+
+    <div class="receipt-body">
+      <div class="text-center mb-4">
+        <div class="paid-stamp">✔ PAID</div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <h6 class="fw-bold text-muted mb-3 text-uppercase" style="font-size:0.75rem;letter-spacing:1px;">Patient Details</h6>
+          <div class="receipt-row"><span class="label">Receipt No.</span><span class="value">PRX-{{ data.prescription_id }}</span></div>
+          <div class="receipt-row"><span class="label">Patient Name</span><span class="value">{{ data.patient_name }}</span></div>
+          <div class="receipt-row"><span class="label">Contact</span><span class="value">{{ data.phone }}</span></div>
+        </div>
+        <div class="col-md-6">
+          <h6 class="fw-bold text-muted mb-3 text-uppercase" style="font-size:0.75rem;letter-spacing:1px;">Doctor Details</h6>
+          <div class="receipt-row"><span class="label">Doctor</span><span class="value">Dr. {{ data.doctor_name }}</span></div>
+          <div class="receipt-row"><span class="label">Specialization</span><span class="value">{{ data.specialization }}</span></div>
+          <div class="receipt-row"><span class="label">Date</span><span class="value">{{ data.date }}</span></div>
+        </div>
+      </div>
+
+      <hr class="my-3"/>
+
+      <h6 class="fw-bold text-muted mb-3 text-uppercase" style="font-size:0.75rem;letter-spacing:1px;">Prescription Details</h6>
+      <div class="receipt-row">
+        <span class="label">Medicines</span>
+        <span class="value" style="max-width:60%;text-align:right;white-space:pre-line;">{{ data.medicines }}</span>
+      </div>
+      {% if data.notes %}
+      <div class="receipt-row">
+        <span class="label">Doctor's Notes</span>
+        <span class="value" style="max-width:60%;text-align:right;">{{ data.notes }}</span>
+      </div>
+      {% endif %}
+
+      <hr class="my-3"/>
+
+      <h6 class="fw-bold text-muted mb-3 text-uppercase" style="font-size:0.75rem;letter-spacing:1px;">Payment Details</h6>
+      <div class="receipt-row"><span class="label">Payment Method</span><span class="value">{{ data.payment_method }}</span></div>
+      <div class="receipt-row"><span class="label">Transaction ID</span><span class="value" style="font-size:0.85rem;">{{ data.transaction_id }}</span></div>
+      <div class="receipt-row">
+        <span class="label">Consultation Fee</span>
+        <span class="value fw-bold fs-5 text-success">₹{{ data.paid_amount }}</span>
+      </div>
+
+      <hr class="my-4"/>
+
+      <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <a href="{{ url_for('prescription_receipt_pdf', prescription_id=data.prescription_id) }}"
+           class="btn btn-danger fw-bold px-4">
+          <i class="bi bi-file-earmark-pdf me-2"></i>Download PDF Receipt
+        </a>
+        <button onclick="printReceipt()" class="btn btn-outline-secondary fw-bold px-4">
+          <i class="bi bi-printer me-2"></i>Print Receipt
+        </button>
+        <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-outline-primary fw-bold px-4">
+          <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

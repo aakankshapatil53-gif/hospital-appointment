@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Patient Registration{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h2><i class="bi bi-person-plus me-2"></i>Patient Registration</h2>
+    <p>Register to book appointments at City Care Hospital</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+      <div class="card">
+        <div class="card-header"><i class="bi bi-person-fill me-2"></i>New Patient Form</div>
+        <div class="card-body p-4">
+
+          {% if error %}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+          {% endif %}
+
+          <form method="POST" id="registerForm" novalidate>
+            <div class="mb-3">
+              <label for="name"><i class="bi bi-person me-1"></i>Full Name</label>
+              <input type="text" class="form-control" id="name" name="name"
+                     placeholder="Enter full name" required maxlength="100"/>
+              <div class="invalid-feedback">Please enter your full name.</div>
+            </div>
+            <div class="mb-3">
+              <label for="age"><i class="bi bi-calendar me-1"></i>Age</label>
+              <input type="number" class="form-control" id="age" name="age"
+                     placeholder="Enter age" min="1" max="149" required
+                     oninput="validateAge(this)"/>
+              <div class="invalid-feedback">Please enter a valid age (1-149).</div>
+            </div>
+            <div class="mb-3">
+              <label for="phone"><i class="bi bi-phone me-1"></i>Phone Number</label>
+              <input type="tel" class="form-control" id="phone" name="phone"
+                     placeholder="10-digit mobile number" required maxlength="10"
+                     oninput="validatePhone(this)"/>
+              <div class="invalid-feedback">Please enter a valid 10-digit phone number.</div>
+            </div>
+            <div class="mb-4">
+              <label for="address"><i class="bi bi-geo-alt me-1"></i>Address</label>
+              <textarea class="form-control" id="address" name="address" rows="3"
+                        placeholder="Enter your full address" required></textarea>
+              <div class="invalid-feedback">Please enter your address.</div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2">
+              <i class="bi bi-person-check me-2"></i>Register & Proceed to Book Appointment
+            </button>
+          </form>
+          <hr/>
+          <p class="text-center text-muted mb-0">
+            Already registered?
+            <a href="{{ url_for('patient_login') }}" class="fw-bold">Login here</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+  const name  = document.getElementById('name').value.trim();
+  const age   = document.getElementById('age').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const addr  = document.getElementById('address').value.trim();
+  if (!name || !age || !phone || !addr) {
+    e.preventDefault();
+    if (!this.classList.contains('was-validated')) this.classList.add('was-validated');
+    showToast('Please fill in all fields.', 'warning');
+    return;
+  }
+  if (phone.length !== 10 || !/^\d+$/.test(phone)) {
+    e.preventDefault();
+    showToast('Phone number must be exactly 10 digits.', 'error');
+    return;
+  }
+  this.classList.add('was-validated');
+});
+</script>
+{% endblock %}

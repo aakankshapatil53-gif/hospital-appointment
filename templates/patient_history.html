@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% block title %}Patient History{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div>
+      <h2><i class="bi bi-clock-history me-2"></i>Complete Patient History</h2>
+      <p class="mb-0">
+        <strong>{{ patient.name }}</strong>
+        &nbsp;|&nbsp; Age: {{ patient.age }} yrs
+        &nbsp;|&nbsp; <i class="bi bi-phone me-1"></i>{{ patient.phone }}
+        &nbsp;|&nbsp; <i class="bi bi-geo-alt me-1"></i>{{ patient.address }}
+      </p>
+    </div>
+    <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-outline-light fw-bold">
+      <i class="bi bi-arrow-left me-2"></i>Back
+    </a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Patient Summary Card -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card text-center p-3">
+        <div style="font-size:2.5rem; color:var(--primary)"><i class="bi bi-calendar-check"></i></div>
+        <div class="fw-bold fs-4">{{ history|length }}</div>
+        <div class="text-muted small">Total Visits</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center p-3">
+        <div style="font-size:2.5rem; color:#28a745"><i class="bi bi-prescription2"></i></div>
+        <div class="fw-bold fs-4">{{ history|selectattr('prescription_id')|list|length }}</div>
+        <div class="text-muted small">Prescriptions</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center p-3">
+        <div style="font-size:2.5rem; color:#17a2b8"><i class="bi bi-currency-rupee"></i></div>
+        <div class="fw-bold fs-4">
+          {% set total = namespace(val=0) %}
+          {% for h in history %}
+            {% if h.pres_paid %}{% set total.val = total.val + h.pres_paid %}{% endif %}
+            {% if h.appt_paid %}{% set total.val = total.val + h.appt_paid %}{% endif %}
+          {% endfor %}
+          ₹{{ "%.0f"|format(total.val) }}
+        </div>
+        <div class="text-muted small">Total Billed</div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-center p-3">
+        <div style="font-size:2.5rem; color:#fd7e14"><i class="bi bi-person-badge"></i></div>
+        <div class="fw-bold fs-4">{{ patient.patient_id }}</div>
+        <div class="text-muted small">Patient ID</div>
+      </div>
+    </div>
+  </div>
+
+  {% if history %}
+    {% for h in history %}
+    <div class="card mb-4" style="border-left: 4px solid var(--primary);">
+      <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <strong><i class="bi bi-calendar-event me-2"></i>{{ h.date }}</strong>
+          &nbsp;&nbsp;
+          <i class="bi bi-clock me-1 text-muted"></i><span class="text-muted">{{ h.time_slot }}</span>
+          &nbsp;&nbsp;
+          <span class="badge bg-light text-dark border ms-1">APT-{{ h.appointment_id }}</span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-muted small"><i class="bi bi-stethoscope me-1"></i>Dr. {{ h.doctor_name }}</span>
+          {% if h.specialization %}
+          <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size:0.75rem;">{{ h.specialization }}</span>
+          {% endif %}
+          {% if h.status == 'Confirmed' %}
+          <span class="badge bg-success">Confirmed</span>
+          {% else %}
+          <span class="badge bg-secondary">{{ h.status }}</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-4">
+
+          <!-- Appointment Info -->
+          <div class="col-md-4">
+            <h6 class="fw-semibold text-muted text-uppercase mb-3" style="font-size:0.78rem; letter-spacing:.05em;">
+              <i class="bi bi-calendar-check me-1"></i>Appointment Info
+            </h6>
+            <table class="table table-sm table-borderless mb-0" style="font-size:0.88rem;">
+              <tr>
+                <td class="text-muted" style="width:45%">Doctor</td>
+                <td class="fw-semibold">Dr. {{ h.doctor_name }}</td>
+              </tr>
+              <tr>
+                <td class="text-muted">Speciality</td>
+                <td>{{ h.specialization or '—' }}</td>
+              </tr>
+              <tr>
+                <td class="text-muted">Appt. Fee</td>
+                <td>
+                  {% if h.appt_paid %}
+                    <span class="fw-bold text-success">₹{{ h.appt_paid }}</span>
+                    <span class="badge bg-success ms-1" style="font-size:0.7rem;">Paid</span>
+                  {% else %}
+                    <span class="text-muted">—</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% if h.appt_payment_method %}
+              <tr>
+                <td class="text-muted">Pay Method</td>
+                <td>{{ h.appt_payment_method }}</td>
+              </tr>
+              {% endif %}
+            </table>
+          </div>
+
+          <!-- Prescription / Diagnosis / Treatment -->
+          <div class="col-md-5">
+            <h6 class="fw-semibold text-muted text-uppercase mb-3" style="font-size:0.78rem; letter-spacing:.05em;">
+              <i class="bi bi-prescription2 me-1"></i>Prescription & Treatment Notes
+            </h6>
+            {% if h.prescription_id %}
+            <div style="font-size:0.88rem;">
+              <div class="mb-2">
+                <span class="text-muted">Prescription ID:</span>
+                <strong class="ms-1">PRX-{{ h.prescription_id }}</strong>
+              </div>
+              {% if h.medicines %}
+              <div class="mb-2">
+                <div class="text-muted mb-1 small fw-semibold">Medicines Prescribed:</div>
+                <div class="bg-light rounded p-2" style="white-space:pre-line; font-size:0.85rem;">{{ h.medicines }}</div>
+              </div>
+              {% endif %}
+              {% if h.notes %}
+              <div class="mb-1">
+                <div class="text-muted mb-1 small fw-semibold">Diagnosis / Doctor's Notes:</div>
+                <div class="fst-italic" style="font-size:0.85rem; color:#444;">{{ h.notes }}</div>
+              </div>
+              {% endif %}
+            </div>
+            {% else %}
+            <div class="text-center py-3 text-muted">
+              <i class="bi bi-file-earmark-x" style="font-size:1.8rem; opacity:0.4;"></i>
+              <div class="mt-2 small">No prescription for this visit</div>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Billing -->
+          <div class="col-md-3">
+            <h6 class="fw-semibold text-muted text-uppercase mb-3" style="font-size:0.78rem; letter-spacing:.05em;">
+              <i class="bi bi-receipt me-1"></i>Billing History
+            </h6>
+            {% if h.prescription_id %}
+            <table class="table table-sm table-borderless mb-0" style="font-size:0.88rem;">
+              <tr>
+                <td class="text-muted">Consult Fee</td>
+                <td class="fw-bold text-primary">₹{{ h.consultation_fee }}</td>
+              </tr>
+              <tr>
+                <td class="text-muted">Bill Status</td>
+                <td>
+                  {% if h.pres_pay_status == 'Completed' %}
+                    <span class="badge bg-success">Paid</span>
+                  {% else %}
+                    <span class="badge bg-warning text-dark">Pending</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% if h.pres_payment_method %}
+              <tr>
+                <td class="text-muted">Method</td>
+                <td>{{ h.pres_payment_method }}</td>
+              </tr>
+              {% endif %}
+              {% if h.pres_txn %}
+              <tr>
+                <td class="text-muted">TXN ID</td>
+                <td style="font-size:0.75rem; word-break:break-all;" class="text-muted">{{ h.pres_txn }}</td>
+              </tr>
+              {% endif %}
+            </table>
+            {% else %}
+            <div class="text-muted small text-center py-3">
+              <i class="bi bi-dash-circle" style="opacity:0.4;"></i>
+              <div class="mt-1">No billing record</div>
+            </div>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+
+  {% else %}
+  <div class="card">
+    <div class="card-body text-center py-5">
+      <div style="font-size:4rem;opacity:0.3;">📋</div>
+      <h5 class="text-muted mt-3">No visit history found for this patient.</h5>
+      <p class="text-muted small">Records appear here once the patient books and completes appointments.</p>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

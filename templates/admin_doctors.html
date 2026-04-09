@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}Admin – Manage Doctors{% endblock %}
+{% block content %}
+<!-- Sidebar -->
+<div class="sidebar d-none d-lg-block">
+  <div class="brand"><i class="bi bi-heart-pulse-fill me-2"></i>CityCare Admin</div>
+  <nav class="nav flex-column mt-2">
+    <a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="bi bi-speedometer2"></i>Dashboard</a>
+    <a class="nav-link active" href="{{ url_for('admin_doctors') }}"><i class="bi bi-stethoscope"></i>Doctors</a>
+    <a class="nav-link" href="{{ url_for('admin_patients') }}"><i class="bi bi-people"></i>Patients</a>
+    <a class="nav-link" href="{{ url_for('admin_appointments') }}"><i class="bi bi-calendar-check"></i>Appointments</a>
+    <a class="nav-link" href="{{ url_for('admin_prescriptions') }}"><i class="bi bi-prescription2"></i>Prescriptions</a>
+    <hr style="border-color:rgba(255,255,255,0.2);margin:8px 16px;"/>
+    <a class="nav-link text-warning" href="{{ url_for('admin_logout') }}"><i class="bi bi-box-arrow-right"></i>Logout</a>
+  </nav>
+</div>
+
+<div class="main-content-with-sidebar">
+  <h3 class="fw-bold mb-4" style="color:var(--primary)"><i class="bi bi-stethoscope me-2"></i>Manage Doctors</h3>
+
+  <!-- Add Doctor Form -->
+  <div class="card mb-4">
+    <div class="card-header"><i class="bi bi-plus-circle me-2"></i>Add New Doctor</div>
+    <div class="card-body p-4">
+      {% if error %}
+      <div class="alert alert-danger alert-dismissible fade show">
+        <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+      {% endif %}
+      <form method="POST">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label>Doctor Name</label>
+            <input type="text" class="form-control" name="name" placeholder="Dr. Full Name" required/>
+          </div>
+          <div class="col-md-4">
+            <label>Specialization</label>
+            <input type="text" class="form-control" name="specialization" placeholder="e.g., Cardiologist" required/>
+          </div>
+          <div class="col-md-4">
+            <label>Phone Number</label>
+            <input type="tel" class="form-control" name="phone" placeholder="10-digit number"
+                   maxlength="10" oninput="validatePhone(this)" required/>
+          </div>
+          <div class="col-md-4">
+            <label>Login Username</label>
+            <input type="text" class="form-control" name="username" placeholder="Doctor login username" required/>
+          </div>
+          <div class="col-md-4">
+            <label>Login Password</label>
+            <input type="password" class="form-control" name="password" placeholder="Set password" required/>
+          </div>
+          <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-success fw-bold w-100">
+              <i class="bi bi-person-plus me-2"></i>Add Doctor
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Doctors Table -->
+  <div class="card">
+    <div class="card-header">
+      <i class="bi bi-list-ul me-2"></i>All Doctors
+      <span class="badge bg-light text-dark ms-2">{{ doctors|length }}</span>
+    </div>
+    <div class="card-body p-0">
+      {% if doctors %}
+      <div class="table-wrapper">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Doctor Name</th>
+              <th>Specialization</th>
+              <th>Phone</th>
+              <th>Registered On</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for doc in doctors %}
+            <tr>
+              <td><strong>DOC-{{ doc.doctor_id }}</strong></td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="feature-icon" style="width:36px;height:36px;font-size:0.9rem;">
+                    <i class="bi bi-person-badge"></i>
+                  </div>
+                  <span class="fw-bold">Dr. {{ doc.name }}</span>
+                </div>
+              </td>
+              <td><span class="badge bg-info text-dark fw-normal">{{ doc.specialization }}</span></td>
+              <td><i class="bi bi-phone me-1 text-muted"></i>{{ doc.phone }}</td>
+              <td><small class="text-muted">{{ doc.created_at.strftime('%d %b %Y') if doc.created_at else '—' }}</small></td>
+              <td>
+                <form method="POST" action="{{ url_for('delete_doctor', doctor_id=doc.doctor_id) }}"
+                      id="delDoc{{ doc.doctor_id }}">
+                  <button type="button" class="btn btn-danger btn-sm fw-bold"
+                          onclick="confirmDelete('delDoc{{ doc.doctor_id }}', 'doctor')">
+                    <i class="bi bi-trash me-1"></i>Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-4 text-muted">No doctors found.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

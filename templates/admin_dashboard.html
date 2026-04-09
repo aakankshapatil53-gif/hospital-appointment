@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<!-- Admin Sidebar -->
+<div class="sidebar d-none d-lg-block">
+  <div class="brand">
+    <i class="bi bi-heart-pulse-fill me-2"></i>CityCarе Admin
+  </div>
+  <nav class="nav flex-column mt-2">
+    <a class="nav-link active" href="{{ url_for('admin_dashboard') }}">
+      <i class="bi bi-speedometer2"></i>Dashboard
+    </a>
+    <a class="nav-link" href="{{ url_for('admin_doctors') }}">
+      <i class="bi bi-stethoscope"></i>Doctors
+    </a>
+    <a class="nav-link" href="{{ url_for('admin_patients') }}">
+      <i class="bi bi-people"></i>Patients
+    </a>
+    <a class="nav-link" href="{{ url_for('admin_appointments') }}">
+      <i class="bi bi-calendar-check"></i>Appointments
+    </a>
+    <a class="nav-link" href="{{ url_for('admin_prescriptions') }}">
+      <i class="bi bi-prescription2"></i>Prescriptions
+    </a>
+    <hr style="border-color:rgba(255,255,255,0.2);margin:8px 16px;"/>
+    <a class="nav-link text-warning" href="{{ url_for('admin_logout') }}">
+      <i class="bi bi-box-arrow-right"></i>Logout
+    </a>
+  </nav>
+</div>
+
+<div class="main-content-with-sidebar">
+  <h3 class="fw-bold mb-1" style="color:var(--primary)">
+    <i class="bi bi-speedometer2 me-2"></i>Admin Dashboard
+  </h3>
+  <p class="text-muted mb-4">Hospital Management Overview</p>
+
+  <!-- Stat Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-2-4">
+      <div class="stat-card stat-bg-blue">
+        <div class="stat-icon"><i class="bi bi-people"></i></div>
+        <div class="stat-number">{{ patients_count }}</div>
+        <div class="stat-label">Total Patients</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2-4">
+      <div class="stat-card stat-bg-green">
+        <div class="stat-icon"><i class="bi bi-stethoscope"></i></div>
+        <div class="stat-number">{{ doctors_count }}</div>
+        <div class="stat-label">Doctors</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2-4">
+      <div class="stat-card stat-bg-orange">
+        <div class="stat-icon"><i class="bi bi-calendar-check"></i></div>
+        <div class="stat-number">{{ appt_count }}</div>
+        <div class="stat-label">Total Appointments</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2-4">
+      <div class="stat-card stat-bg-teal">
+        <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+        <div class="stat-number">{{ confirmed_count }}</div>
+        <div class="stat-label">Confirmed</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2-4">
+      <div class="stat-card stat-bg-red">
+        <div class="stat-icon"><i class="bi bi-currency-rupee"></i></div>
+        <div class="stat-number">₹{{ "%.0f"|format(total_revenue) }}</div>
+        <div class="stat-label">Total Revenue</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Links -->
+  <div class="row g-3">
+    <div class="col-md-4">
+      <a href="{{ url_for('admin_doctors') }}" class="card text-decoration-none" style="transition:transform 0.2s;">
+        <div class="card-body d-flex align-items-center gap-3 p-4">
+          <div class="feature-icon" style="width:52px;height:52px;font-size:1.3rem;flex-shrink:0;">
+            <i class="bi bi-stethoscope"></i>
+          </div>
+          <div>
+            <div class="fw-bold" style="color:var(--primary)">Manage Doctors</div>
+            <small class="text-muted">Add, view, delete doctors</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="{{ url_for('admin_patients') }}" class="card text-decoration-none">
+        <div class="card-body d-flex align-items-center gap-3 p-4">
+          <div class="feature-icon" style="width:52px;height:52px;font-size:1.3rem;flex-shrink:0;">
+            <i class="bi bi-people"></i>
+          </div>
+          <div>
+            <div class="fw-bold" style="color:var(--primary)">Manage Patients</div>
+            <small class="text-muted">View and manage patients</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="{{ url_for('admin_appointments') }}" class="card text-decoration-none">
+        <div class="card-body d-flex align-items-center gap-3 p-4">
+          <div class="feature-icon" style="width:52px;height:52px;font-size:1.3rem;flex-shrink:0;">
+            <i class="bi bi-calendar-check"></i>
+          </div>
+          <div>
+            <div class="fw-bold" style="color:var(--primary)">View Appointments</div>
+            <small class="text-muted">All bookings and payments</small>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="{{ url_for('admin_prescriptions') }}" class="card text-decoration-none">
+        <div class="card-body d-flex align-items-center gap-3 p-4">
+          <div class="feature-icon" style="width:52px;height:52px;font-size:1.3rem;flex-shrink:0;">
+            <i class="bi bi-prescription2"></i>
+          </div>
+          <div>
+            <div class="fw-bold" style="color:var(--primary)">Prescriptions</div>
+            <small class="text-muted">All prescriptions and bills</small>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+.col-lg-2-4 { width: 20%; }
+@media(max-width:991px){ .col-lg-2-4 { width:50%; } }
+@media(max-width:575px){ .col-lg-2-4 { width:100%; } }
+</style>
+{% endblock %}

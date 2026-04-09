@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Doctor Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div>
+      <h2><i class="bi bi-stethoscope me-2"></i>Doctor Dashboard</h2>
+      <p>Welcome, <strong>Dr. {{ session.doctor_name }}</strong> | Today: {{ today }}</p>
+    </div>
+    <a href="{{ url_for('doctor_logout') }}" class="btn btn-outline-light fw-bold">
+      <i class="bi bi-box-arrow-right me-2"></i>Logout
+    </a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <i class="bi bi-calendar-day me-2"></i>Today's Appointments
+      <span class="badge bg-warning text-dark ms-2">{{ appointments|length }}</span>
+    </div>
+    <div class="card-body p-0">
+      {% if appointments %}
+      <div class="table-wrapper">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Patient Name</th>
+              <th>Age</th>
+              <th>Phone</th>
+              <th>Time Slot</th>
+              <th>Prescription</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for a in appointments %}
+            <tr>
+              <td><strong>APT-{{ a.appointment_id }}</strong></td>
+              <td>
+                <div class="fw-bold">{{ a.patient_name }}</div>
+              </td>
+              <td>{{ a.age }} yrs</td>
+              <td><i class="bi bi-phone me-1 text-muted"></i>{{ a.phone }}</td>
+              <td><i class="bi bi-clock me-1 text-muted"></i>{{ a.time_slot }}</td>
+              <td>
+                {% if a.prescription_id %}
+                  <span class="badge-confirmed"><i class="bi bi-check me-1"></i>Written</span>
+                {% else %}
+                  <span class="badge-pending">Pending</span>
+                {% endif %}
+              </td>
+              <td class="d-flex gap-2 flex-wrap">
+                {% if not a.prescription_id %}
+                <a href="{{ url_for('add_prescription', appointment_id=a.appointment_id) }}"
+                   class="btn btn-primary btn-sm fw-bold">
+                  <i class="bi bi-prescription2 me-1"></i>Write Prescription
+                </a>
+                {% else %}
+                <span class="badge bg-success text-white px-3 py-2" style="font-size:0.8rem;">
+                  <i class="bi bi-check-circle me-1"></i>Prescription Saved
+                </span>
+                {% endif %}
+                <a href="{{ url_for('patient_history', patient_id=a.patient_id) }}"
+                   class="btn btn-outline-secondary btn-sm">
+                  <i class="bi bi-clock-history me-1"></i>History
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="text-center py-5">
+        <div style="font-size:4rem; opacity:0.3;">🩺</div>
+        <h5 class="text-muted mt-3">No confirmed appointments for today.</h5>
+        <p class="text-muted small">Appointments appear here once patients complete payment.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Patient Login{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h2><i class="bi bi-person-circle me-2"></i>Patient Login</h2>
+    <p>Login with your registered phone number</p>
+  </div>
+</div>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-5 col-lg-4">
+      <div class="card">
+        <div class="card-header"><i class="bi bi-phone me-2"></i>Login with Phone Number</div>
+        <div class="card-body p-4">
+          {% if error %}
+          <div class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+          {% endif %}
+          <form method="POST">
+            <div class="mb-4">
+              <label for="phone"><i class="bi bi-phone me-1"></i>Registered Phone Number</label>
+              <input type="tel" class="form-control form-control-lg" id="phone" name="phone"
+                     placeholder="Enter 10-digit phone number" maxlength="10"
+                     oninput="validatePhone(this)" required/>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 py-2">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Login
+            </button>
+          </form>
+          <hr/>
+          <p class="text-center text-muted mb-0">
+            New patient? <a href="{{ url_for('patient_register') }}" class="fw-bold">Register here</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
